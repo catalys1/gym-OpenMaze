@@ -38,7 +38,7 @@ class OpenMaze(gym.Env):
 		else:
 			self._construct_default_maze()
 
-		self.agent_start_location = np.array((self.size[0]-2, 1))
+		self.agent_start_location = np.array((self.maze_size[0]-2, 1))
 		self.agent_location = self.agent_start_location
 		self.goal_locations = np.argwhere(self.maze_cells==self.GOAL_CELL)
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
@@ -54,11 +54,11 @@ class OpenMaze(gym.Env):
 
 		self._fill_edges()
 		self.maze_cells[-2,1:-1] = self.START_CELL
-		self.maze_cells[1,1:-1] = self.END_CELL
+		self.maze_cells[1,1:-1] = self.GOAL_CELL
 
 		y_coords = [2,3,4,6,6,7]
 		x_coords = [3,1,3,2,3,3]
-		self.maze_cells[y_coords, x_coords] = WALL_CELL
+		self.maze_cells[y_coords, x_coords] = self.WALL_CELL
 
 
 	def _fill_edges(self):
@@ -76,11 +76,15 @@ class OpenMaze(gym.Env):
 		info = {}
 
 		if isinstance(action, int):
-			action = self.ACTION_ENUM(action)
+			action = self.ACTION_ENUM[action]
 		delta = self.ACTION_MOVEMENT[action]
 
 		new_location = self.agent_location + delta
-		if self.maze_cells[new_location[0],new_location[1]] == self.GOAL_CELL:
+		if (min(new_location) < 0 
+				or new_location[0] >= self.maze_size[0]
+				or new_location[1] >= self.maze_size[1]):
+			pass
+		elif self.maze_cells[new_location[0],new_location[1]] == self.GOAL_CELL:
 			reward = self.COMPLETION_REWARD
 			done = True
 		elif self.maze_cells[new_location[0],new_location[1]] != self.WALL_CELL:
