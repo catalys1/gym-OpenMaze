@@ -75,8 +75,11 @@ class OpenMaze(gym.Env):
 		done = False
 		info = {}
 
-		if isinstance(action, int):
+		try:
+			action = int(action)
 			action = self.ACTION_ENUM[action]
+		except:
+			pass
 		delta = self.ACTION_MOVEMENT[action]
 
 		new_location = self.agent_location + delta
