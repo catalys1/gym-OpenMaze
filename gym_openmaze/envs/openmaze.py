@@ -53,8 +53,8 @@ class OpenMaze(gym.Env):
 	def _construct_default_maze(self):
 
 		self._fill_edges()
-		self.maze_cells[-2,1:-1] = START_CELL
-		self.maze_cells[1,1:-1] = END_CELL
+		self.maze_cells[-2,1:-1] = self.START_CELL
+		self.maze_cells[1,1:-1] = self.END_CELL
 
 		y_coords = [2,3,4,6,6,7]
 		x_coords = [3,1,3,2,3,3]
