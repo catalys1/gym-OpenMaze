@@ -1,5 +1,7 @@
 import numpy as np
 import gym
+from gym import spaces
+
 
 class OpenMaze(gym.Env):
 	'''OpenMaze(size=(10,7), random=False)
@@ -41,6 +43,10 @@ class OpenMaze(gym.Env):
 		self.goal_locations = np.argwhere(self.maze_cells==self.GOAL_CELL)
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
 
+		self.action_space = spaces.Discrete(len(self.ACTIONS))
+		self.observation_space = spaces.Box(
+			low=0, high=max(size), shape=size, dtype=np.uint8)
+
 	def _construct_random_maze(self):
 		pass
 
@@ -74,10 +80,10 @@ class OpenMaze(gym.Env):
 		delta = self.ACTION_MOVEMENT[action]
 
 		new_location = self.agent_location + delta
-		if self.maze_cells[*new_location] == self.GOAL_CELL:
+		if self.maze_cells[new_location[0],new_location[1]] == self.GOAL_CELL:
 			reward = self.COMPLETION_REWARD
 			done = True
-		elif self.maze_cells[*new_location] != self.WALL_CELL:
+		elif self.maze_cells[new_location[0],new_location[1]] != self.WALL_CELL:
 			dist_from_goal = self._distance_from_goal(new_location)
 			if dist_from_goal < self.min_dist_from_goal:
 				reward = self.STEP_REWARD
@@ -89,6 +95,7 @@ class OpenMaze(gym.Env):
 	def reset(self):
 		self.agent_location = self.agent_start_location
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
+		return self.agent_location
 
 	def render(self, mode='human', close=False):
 		pass
