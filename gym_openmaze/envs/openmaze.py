@@ -18,6 +18,10 @@ class OpenMaze(gym.Env):
 		the default 10x7 maze. Default: False.
 	'''
 
+	metadata = {
+		'render.modes': ['human', 'print']
+	}
+
 	EMPTY_CELL = 0
 	WALL_CELL = 1
 	START_CELL = 2
@@ -30,7 +34,7 @@ class OpenMaze(gym.Env):
 	STEP_REWARD = 1.0
 	COMPLETION_REWARD = 5.0
 
-	def __init__(self, size=(10,7), random=False, render=False):
+	def __init__(self, size=(10,7), random=False):
 		self.maze_size = size
 		self.maze_cells = np.zeros(size)	
 
@@ -48,11 +52,7 @@ class OpenMaze(gym.Env):
 		self.observation_space = spaces.Box(
 			low=0, high=max(size), shape=size, dtype=np.uint8)
 
-		self.rendering = render
-		if render:
-			self.view = MazeView(maze=self.maze_cells)
-		else:
-			self.view = None
+		self.view = None
 
 	def _construct_random_maze(self):
 		pass
@@ -111,8 +111,10 @@ class OpenMaze(gym.Env):
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
 		return self.agent_location
 
-	def render(self, mode='human', close=False):
-		if self.rendering:
+	def render(self, mode='human'):
+		if mode == 'human':
+			if self.view is None:
+				self.view = MazeView(maze=self.maze_cells)
 			self.view.update_agent(*self.agent_location[::-1])
 			self.view.update()
 		else:
