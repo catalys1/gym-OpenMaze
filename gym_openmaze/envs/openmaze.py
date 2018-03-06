@@ -63,8 +63,8 @@ class OpenMaze(gym.Env):
 
 	def _fill_edges(self):
 
-		self.maze_cells[(0,1),:] = 1
-		self.maze_cells[:,(0,1)] = 1
+		self.maze_cells[(0,-1),:] = 1
+		self.maze_cells[:,(0,-1)] = 1
 
 	def _distance_from_goal(self, location):
 		return np.abs(self.goal_locations-location).sum(axis=1).min()
@@ -105,4 +105,6 @@ class OpenMaze(gym.Env):
 		return self.agent_location
 
 	def render(self, mode='human', close=False):
-		pass
+		print(self.agent_location)
+
+		
