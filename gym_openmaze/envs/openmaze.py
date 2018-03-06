@@ -1,6 +1,7 @@
 import numpy as np
 import gym
 from gym import spaces
+from gym_openmaze.envs.maze_view import MazeView
 
 
 class OpenMaze(gym.Env):
@@ -29,7 +30,7 @@ class OpenMaze(gym.Env):
 	STEP_REWARD = 1.0
 	COMPLETION_REWARD = 5.0
 
-	def __init__(self, size=(10,7), random=False):
+	def __init__(self, size=(10,7), random=False, render=False):
 		self.maze_size = size
 		self.maze_cells = np.zeros(size)	
 
@@ -46,6 +47,12 @@ class OpenMaze(gym.Env):
 		self.action_space = spaces.Discrete(len(self.ACTIONS))
 		self.observation_space = spaces.Box(
 			low=0, high=max(size), shape=size, dtype=np.uint8)
+
+		self.rendering = render
+		if render:
+			self.view = MazeView(maze=self.maze_cells)
+		else:
+			self.view = None
 
 	def _construct_random_maze(self):
 		pass
@@ -105,6 +112,10 @@ class OpenMaze(gym.Env):
 		return self.agent_location
 
 	def render(self, mode='human', close=False):
-		print(self.agent_location)
+		if self.rendering:
+			self.view.update_agent(*self.agent_location[::-1])
+			self.view.update()
+		else:
+			print(self.agent_location)
 
 		
