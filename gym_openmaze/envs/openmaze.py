@@ -4,14 +4,6 @@ from gym import spaces
 from gym_openmaze.envs.maze_view import MazeView
 
 
-class BoxLimited(spaces.Box):
-	'''
-	'''
-
-	def __init__(self, low, high, shape, dtype):
-		super(BoxLimited, self).__init__(low=low,high=high,shape=shape,dtype=dtype)
-
-
 class OpenMaze(gym.Env):
 	'''OpenMaze(size=(10,7), random=False)
 	An open maze environment. There are start and goal cells, with obstacles
@@ -54,9 +46,9 @@ class OpenMaze(gym.Env):
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
 
 		self.action_space = spaces.Discrete(len(self.ACTIONS))
-		self.observation_space = BoxLimited(
+		self.observation_space = spaces.Box(
 			low=0, high=max(size), shape=size, dtype=np.uint8)
-		self.observation_space.available_actions = self.available_actions
+		self.action_space.available_actions = self.available_actions
 
 		self.view = None
 
@@ -125,7 +117,7 @@ class OpenMaze(gym.Env):
 			self.agent_location = new_location
 
 		return (
-			(self.agent_location, self.available_actions(*self.agent_location)),
+			self.agent_location,
 			reward, 
 			done, 
 			info
@@ -134,7 +126,7 @@ class OpenMaze(gym.Env):
 	def reset(self):
 		self.agent_location = self.agent_start_location
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
-		return (self.agent_location, self.available_actions(*self.agent_location))
+		return self.agent_location
 
 	def render(self, mode='human'):
 		if mode == 'human':
