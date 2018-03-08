@@ -31,9 +31,6 @@ class OpenMaze(gym.Env):
 	ACTION_ENUM = {i:a for i,a in enumerate(ACTIONS)}
 	ACTION_MOVEMENT = {'N':(-1,0), 'E':(0,1), 'S':(1,0), 'W':(0,-1)}
 
-	STEP_REWARD = 1.0
-	COMPLETION_REWARD = 5.0
-
 	def __init__(self, size=(10,7), random=False):
 		self.maze_size = size
 		self.maze_cells = np.zeros(size)	
@@ -53,6 +50,12 @@ class OpenMaze(gym.Env):
 			low=0, high=max(size), shape=size, dtype=np.uint8)
 
 		self.view = None
+
+		self.COMPLETION_REWARD = 1.0
+		self.STEP_REWARD = (
+			self.COMPLETION_REWARD / 
+			self._distance_from_goal(self.agent_location)
+		)
 
 	def _construct_random_maze(self):
 		pass
@@ -76,6 +79,14 @@ class OpenMaze(gym.Env):
 	def _distance_from_goal(self, location):
 		return np.abs(self.goal_locations-location).sum(axis=1).min()
 
+	def available_actions(self, y, x):
+		movements = {0: (y-1, x), 1: (y, x+1), 2: (y-1, x), 3: (y, x-1)}
+		valid = [
+			action for action, move in movements.items() 
+			if self.maze_cells[move] != 1
+		]
+		return valid
+
 	def step(self, action):
 
 		reward = 0
@@ -95,7 +106,7 @@ class OpenMaze(gym.Env):
 				or new_location[1] >= self.maze_size[1]):
 			pass
 		elif self.maze_cells[new_location[0],new_location[1]] == self.GOAL_CELL:
-			reward = self.COMPLETION_REWARD
+			reward = self.STEP_REWARD
 			done = True
 		elif self.maze_cells[new_location[0],new_location[1]] != self.WALL_CELL:
 			dist_from_goal = self._distance_from_goal(new_location)
@@ -104,12 +115,17 @@ class OpenMaze(gym.Env):
 				self.min_dist_from_goal = dist_from_goal
 			self.agent_location = new_location
 
-		return self.agent_location, reward, done, info
+		return (
+			(self.agent_location, self.available_actions(*self.agent_location)),
+			reward, 
+			done, 
+			info
+		)
 
 	def reset(self):
 		self.agent_location = self.agent_start_location
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
-		return self.agent_location
+		return (self.agent_location, self.available_actions(*self.agent_location))
 
 	def render(self, mode='human'):
 		if mode == 'human':
