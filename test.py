@@ -7,9 +7,8 @@ env = gym.make("openmaze-v0")
 rewards = []
 observation = env.reset()
 while True:
-    observation, reward, done, info = env.step(random.choice(observation[1]))
-    print(reward)
-    rewards.append(reward)
+    observation, reward, done, info = env.step(
+    	random.choice(env.action_space.available_actions(*observation)))
 
     env.render()
 

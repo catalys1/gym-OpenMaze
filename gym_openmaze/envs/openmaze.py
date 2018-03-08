@@ -48,6 +48,7 @@ class OpenMaze(gym.Env):
 		self.action_space = spaces.Discrete(len(self.ACTIONS))
 		self.observation_space = spaces.Box(
 			low=0, high=max(size), shape=size, dtype=np.uint8)
+		self.action_space.available_actions = self.available_actions
 
 		self.view = None
 
@@ -117,7 +118,7 @@ class OpenMaze(gym.Env):
 			self.agent_location = new_location
 
 		return (
-			(self.agent_location, self.available_actions(*self.agent_location)),
+			self.agent_location,
 			reward, 
 			done, 
 			info
@@ -126,7 +127,7 @@ class OpenMaze(gym.Env):
 	def reset(self):
 		self.agent_location = self.agent_start_location
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
-		return (self.agent_location, self.available_actions(*self.agent_location))
+		return self.agent_location
 
 	def render(self, mode='human'):
 		if mode == 'human':
