@@ -81,11 +81,11 @@ class OpenMaze(gym.Env):
 		return np.abs(self.goal_locations-location).sum(axis=1).min()
 
 	def available_actions(self, y, x):
-		movements = {0: (y-1, x), 1: (y, x+1), 2: (y-1, x), 3: (y, x-1)}
+		movements = ((0, (y-1, x)), (1, (y, x+1)), (2, (y-1, x)), (3, (y, x-1)))
 		valid = [
-			action for action, move in movements.items() 
-			if np.greater(move, 0) and np.less(move, self.maze_size) 
-			and self.maze_cells[move] != 1
+			action for action, move in movements 
+			if np.greater(move, 0).all() and np.less(move, self.maze_size).all()
+			and self.maze_cells[move] != self.WALL_CELL
 		]
 		return valid
 
