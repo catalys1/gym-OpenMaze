@@ -9,7 +9,8 @@ observation = env.reset()
 while True:
     observation, reward, done, info = env.step(
     	random.choice(env.action_space.available_actions(*observation)))
-
+    rewards.append(reward)
+    
     env.render()
 
     if done:
