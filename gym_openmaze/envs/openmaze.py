@@ -32,7 +32,7 @@ class OpenMaze(gym.Env):
 	ACTION_MOVEMENT = {'N':(-1,0), 'E':(0,1), 'S':(1,0), 'W':(0,-1)}
 
 	def __init__(self, size=(10,7), random=False):
-		self.maze_size = size
+		self.maze_size = np.array(size)
 		self.maze_cells = np.zeros(size)	
 
 		if random:
@@ -83,7 +83,8 @@ class OpenMaze(gym.Env):
 		movements = {0: (y-1, x), 1: (y, x+1), 2: (y-1, x), 3: (y, x-1)}
 		valid = [
 			action for action, move in movements.items() 
-			if self.maze_cells[move] != 1
+			if np.greater(move, 0) and np.less(move, self.maze_size) 
+			and self.maze_cells[move] != 1
 		]
 		return valid
 
