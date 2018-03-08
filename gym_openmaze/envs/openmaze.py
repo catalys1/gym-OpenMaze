@@ -44,6 +44,7 @@ class OpenMaze(gym.Env):
 		self.agent_location = self.agent_start_location
 		self.goal_locations = np.argwhere(self.maze_cells==self.GOAL_CELL)
 		self.min_dist_from_goal = self._distance_from_goal(self.agent_location)
+		self.last_dist_from_goal = self.min_dist_from_goal
 
 		self.action_space = spaces.Discrete(len(self.ACTIONS))
 		self.observation_space = spaces.Box(
@@ -115,6 +116,9 @@ class OpenMaze(gym.Env):
 			if dist_from_goal < self.min_dist_from_goal:
 				reward = self.STEP_REWARD
 				self.min_dist_from_goal = dist_from_goal
+			elif dist_from_goal > self.last_dist_from_goal:
+				reward = -self.STEP_REWARD * 0.1
+			self.last_dist_from_goal = dist_from_goal
 			self.agent_location = new_location
 
 		return (
