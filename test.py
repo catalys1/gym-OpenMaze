@@ -2,18 +2,25 @@ import gym
 import gym_openmaze
 import random
 
-env = gym.make("openmaze-v0")
+envs = [
+	'openmazenobacktrack-v0',
+	'openmazeinchworm-v0',
+	'openmazeurgency-v0'
+]
 
-rewards = []
-observation = env.reset()
-while True:
-    observation, reward, done, info = env.step(
-    	random.choice(env.action_space.available_actions(*observation)))
-    rewards.append(reward)
-    
-    env.render()
+for e in envs:
+	env = gym.make(e)
 
-    if done:
-        break
+	rewards = []
+	observation = env.reset()
+	while True:
+		observation, reward, done, info = env.step(
+			random.choice(env.action_space.available_actions(*observation)))
+		rewards.append(reward)
 
-print('Total reward: {}'.format(sum(rewards)))
+		env.render()
+
+		if done:
+			break
+
+	print('Total reward ({}): {}'.format(e, sum(rewards)))
