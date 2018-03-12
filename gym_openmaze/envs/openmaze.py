@@ -406,13 +406,13 @@ class OpenMaze(gym.Env):
 		if (min(new_location) < 0
 			or new_location[0] >= self.maze_size[0]
 			or new_location[1] >= self.maze_size[1]):
-			return self.agent_location, reward, done, info
+			return tuple(self.agent_location), reward, done, info
 
 		if self.maze_cells[new_location] == self.GOAL_CELL:
 			reward = self.completion_bonus_reward
 			done = True
 		elif self.maze_cells[new_location] == self.WALL_CELL:
-			return self.agent_location, reward, done, info
+			return tuple(self.agent_location), reward, done, info
 
 		self.steps += 1
 
