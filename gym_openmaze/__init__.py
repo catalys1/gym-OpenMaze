@@ -24,7 +24,9 @@ register(
 	id='OpenMazeOnlyCompletionReward-v0',
 	entry_point='gym_openmaze.envs:OpenMaze',
 	kwargs={
-		'step_reward': lambda step: 0.0
+		'unvisted_state_reward': 0.0,
+		'visted_state_reward': 0.0,
+		'completion_bonus_reward': 1.,
 	},
 	max_episode_steps=1000
 )
