@@ -65,3 +65,17 @@ for max_cycles, window_size in itertools.product(cycles, windows):
 		},
 		max_episode_steps=max_episode_steps,
 	)
+
+	register(
+		id='OpenMazeDiscountCompletion{}-v0'.format(cycle_id),
+		entry_point='gym_openmaze.envs:OpenMaze',
+		kwargs={
+			'unvisted_state_reward': 0.0,
+			'visted_state_reward': 0.0,
+			'completion_bonus_reward': 1.,
+			'allowed_cycle_count': max_cycles,
+			'cycle_window': window_size,
+		},
+		max_episode_steps=max_episode_steps,
+		use_discounting=True,
+	)

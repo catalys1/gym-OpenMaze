@@ -325,7 +325,8 @@ class OpenMaze(gym.Env):
 				 visted_state_reward=0.,
 				 completion_bonus_reward=1.,
 				 cycle_window=2,
-				 allowed_cycle_count=np.inf):
+				 allowed_cycle_count=np.inf,
+				 use_discounting=False):
 		self.maze_size = np.array(size)
 		self.maze_cells = np.zeros(size)
 
@@ -350,6 +351,8 @@ class OpenMaze(gym.Env):
 
 		self.allowed_cycle_count = allowed_cycle_count
 		self.cycle_window = cycle_window
+
+		self.use_discounting = use_discounting
 
 		low = min(self.visted_state_reward, self.unvisted_state_reward)
 		high = max(self.visted_state_reward, self.unvisted_state_reward)
@@ -377,6 +380,10 @@ class OpenMaze(gym.Env):
 
 	def _distance_from_goal(self, location):
 		return np.abs(self.goal_locations-location).sum(axis=1).min()
+
+	def _discount(self, reward, steps):
+		# magic discount function
+		return 1 - 1 / (1 + np.exp(-0.4*steps + 8))
 
 	def available_actions(self, y, x):
 		valid = np.zeros(self.action_space.n)
@@ -410,6 +417,8 @@ class OpenMaze(gym.Env):
 
 		if self.maze_cells[new_location] == self.GOAL_CELL:
 			reward = self.completion_bonus_reward
+			if self.use_discounting:
+				reward = self._discount(reward, self.steps)
 			done = True
 		elif self.maze_cells[new_location] == self.WALL_CELL:
 			return tuple(self.agent_location), reward, done, info
