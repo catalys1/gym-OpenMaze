@@ -31,6 +31,18 @@ register(
 	max_episode_steps=1000
 )
 
+register(
+	id='OpenMazeDiscountCompletion-v0',
+	entry_point='gym_openmaze.envs:OpenMaze',
+	kwargs={
+		'unvisted_state_reward': 0.0,
+		'visted_state_reward': 0.0,
+		'completion_bonus_reward': 1.,
+		'use_discounting': True,
+	},
+	max_episode_steps=1000
+)
+
 
 max_episode_steps = 2000
 cycles = itertools.chain(
@@ -75,7 +87,7 @@ for max_cycles, window_size in itertools.product(cycles, windows):
 			'completion_bonus_reward': 1.,
 			'allowed_cycle_count': max_cycles,
 			'cycle_window': window_size,
+			'use_discounting': True,
 		},
 		max_episode_steps=max_episode_steps,
-		use_discounting=True,
 	)

@@ -3,9 +3,7 @@ import gym_openmaze
 import random
 
 envs = [
-	'openmazenobacktrack-v0',
-	'openmazeinchworm-v0',
-	'openmazeurgency-v0'
+	'OpenMazeDiscountCompletion-v0',
 ]
 
 for e in envs:
