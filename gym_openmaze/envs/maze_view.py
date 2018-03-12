@@ -3,7 +3,7 @@ import numpy as np
 
 class MazeView(object):
 
-	def __init__(self, maze, screen_size=(450, 600), debug=False):
+	def __init__(self, maze, screen_size=(450, 600), debug=True):
 		pygame.init()
 		pygame.display.set_caption('Maze')
 		self.clock = pygame.time.Clock()
