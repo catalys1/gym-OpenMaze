@@ -3,7 +3,7 @@ import numpy as np
 
 class MazeView(object):
 
-	def __init__(self, maze, screen_size=(225,300)):
+	def __init__(self, maze, screen_size=(450, 600), debug=False):
 		pygame.init()
 		pygame.display.set_caption('Maze')
 		self.clock = pygame.time.Clock()
@@ -31,6 +31,10 @@ class MazeView(object):
 			3: goal_color
 		}
 
+		self.debug = debug
+		if self.debug:
+			self.font = pygame.font.SysFont('Helvetica', size=20)
+
 		self._draw_maze()
 		self.update()
 
@@ -41,9 +45,14 @@ class MazeView(object):
 			for x in range(self.maze_size[1]):
 				# import pdb; pdb.set_trace()
 				color = self.cell_colors[self.maze[y][x]]
-				pygame.draw.rect(
-					self.maze_layer, color, 
-					(x*self.CELL_W,y*self.CELL_H,self.CELL_W,self.CELL_H))
+				pygame.draw.rect(self.maze_layer, color,
+								 (x * self.CELL_W, y * self.CELL_H,
+								 self.CELL_W, self.CELL_H))
+
+				if self.debug:
+					text = self.font.render(str((y, x)), True, (0, 0, 0))
+					self.maze_layer.blit(
+						text, (x * self.CELL_W + 3, y * self.CELL_H + 10))
 
 		# drawing the horizontal lines
 		for y in range(self.maze_size[0]+1):
